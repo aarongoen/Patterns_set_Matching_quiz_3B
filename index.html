@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
   <title>Patterns Set 3B Matching Quiz</title>
 
   <style>
+
     :root{
       --ncs-navy:#0b1f3b;
       --ncs-gold:#caa43b;
@@ -32,7 +34,7 @@
     }
 
     .shell{
-      max-width:1400px;
+      max-width:1600px;
       margin:0 auto;
     }
 
@@ -110,6 +112,7 @@
       color:#fff;
       cursor:pointer;
       font-weight:bold;
+      font-size:14px;
     }
 
     button.secondary{
@@ -143,35 +146,26 @@
     }
 
     .q{
-      margin-top:18px;
-      padding-top:18px;
+      margin-top:24px;
+      padding-top:24px;
       border-top:1px solid var(--border);
     }
 
     .qHeader{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
       margin-bottom:12px;
-    }
-
-    .onceTag{
-      font-size:12px;
-      padding:5px 10px;
-      border-radius:999px;
-      background:rgba(11,31,59,.08);
     }
 
     .audioRow{
       display:flex;
       align-items:center;
-      gap:12px;
-      margin-bottom:16px;
+      gap:14px;
+      margin-bottom:18px;
+      flex-wrap:wrap;
     }
 
     .choices{
       display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(500px,1fr));
+      grid-template-columns:repeat(auto-fit,minmax(520px,1fr));
       gap:20px;
     }
 
@@ -185,7 +179,7 @@
       align-items:center;
       cursor:pointer;
       background:#fff;
-      transition:.1s ease;
+      transition:.12s ease;
     }
 
     .choice:hover{
@@ -228,21 +222,30 @@
 <div class="shell">
 
   <div class="brandbar">
+
     <div class="crest">NCS</div>
 
     <div>
-      <div style="font-size:12px;opacity:.85;">National Cathedral School</div>
-      <div style="font-weight:bold;">Patterns — Set 3B Matching Quiz</div>
+      <div style="font-size:12px;opacity:.85;">
+        National Cathedral School
+      </div>
+
+      <div style="font-weight:bold;">
+        Patterns — Set 3B Matching Quiz
+      </div>
     </div>
+
   </div>
 
   <!-- INTRO -->
+
   <div id="introCard" class="card">
 
     <h2>Welcome</h2>
 
     <div class="muted">
       Listen to each example and choose the matching image.
+      You may replay examples as needed.
     </div>
 
     <div style="height:12px;"></div>
@@ -267,6 +270,7 @@
         </div>
 
         <div class="field">
+
           <label>Grade / Section</label>
 
           <select id="gradeSection" required>
@@ -277,6 +281,7 @@
             <option value="5B">5B</option>
             <option value="5C">5C</option>
           </select>
+
         </div>
 
       </div>
@@ -284,8 +289,13 @@
       <div class="divider"></div>
 
       <div class="topActions">
-        <button id="startBtn" type="submit">Start Quiz</button>
-        <span class="pill">4 Questions</span>
+        <button id="startBtn" type="submit">
+          Start Quiz
+        </button>
+
+        <span class="pill">
+          4 Questions
+        </span>
       </div>
 
       <div id="introStatus" class="status"></div>
@@ -295,11 +305,19 @@
   </div>
 
   <!-- QUIZ -->
+
   <div id="quizCard" class="card hidden">
 
     <div class="topActions">
-      <h2 style="margin-right:auto;">Quiz</h2>
-      <button id="resetBtn" class="secondary" type="button">Start Over</button>
+
+      <h2 style="margin-right:auto;">
+        Quiz
+      </h2>
+
+      <button id="resetBtn" class="secondary" type="button">
+        Start Over
+      </button>
+
     </div>
 
     <div id="questions"></div>
@@ -307,8 +325,13 @@
     <div class="divider"></div>
 
     <div class="topActions">
-      <button id="submitBtn" type="button">Submit</button>
+
+      <button id="submitBtn" type="button">
+        Submit
+      </button>
+
       <span id="scorePreview"></span>
+
     </div>
 
     <div id="submitStatus" class="status"></div>
@@ -316,6 +339,7 @@
   </div>
 
   <!-- DONE -->
+
   <div id="doneCard" class="card hidden">
 
     <h2>Finished!</h2>
@@ -324,7 +348,9 @@
 
     <div style="height:12px;"></div>
 
-    <button id="doneResetBtn" class="secondary">Start Over</button>
+    <button id="doneResetBtn" class="secondary">
+      Start Over
+    </button>
 
   </div>
 
@@ -341,6 +367,7 @@ const QUIZ_CONFIG = {
 };
 
 const ASSET_INDEX = {
+
   images:[
     {title:"3b.1.png",key:"img/3b.1.png"},
     {title:"3b.2.png",key:"img/3b.2.png"},
@@ -362,9 +389,11 @@ const ASSET_INDEX = {
     {id:"Q7",prompt:"Question 7",audioKey:"audio/3b.7.mp3",correctImageTitle:"3b.7.png"},
     {id:"Q8",prompt:"Question 8",audioKey:"audio/3b.8.mp3",correctImageTitle:"3b.8.png"}
   ]
+
 };
 
 const FILES = {
+
   "audio/3b.1.mp3":"https://dl.dropboxusercontent.com/scl/fi/swufkev1pa5pc0drogcl9/3b.1.mp3?raw=1",
   "audio/3b.2.mp3":"https://dl.dropboxusercontent.com/scl/fi/8sscdaw5smj1275088edq/3b.2.mp3?raw=1",
   "audio/3b.3.mp3":"https://dl.dropboxusercontent.com/scl/fi/jp844ubmmcj84wqo1b6bn/3b.3.mp3?raw=1",
@@ -374,39 +403,51 @@ const FILES = {
   "img/3b.2.png":"https://dl.dropboxusercontent.com/scl/fi/rwbt63vrv5oi9qvp9n4zy/3b.2.png?raw=1",
   "img/3b.3.png":"https://dl.dropboxusercontent.com/scl/fi/oycyt4lj62jjq9tyhprr7/3b.3.png?raw=1",
   "img/3b.4.png":"https://dl.dropboxusercontent.com/scl/fi/gb0nd0zjwtx74w0h2wrop/3b.4.png?raw=1"
+
 };
 
 const $ = (id)=>document.getElementById(id);
 
-let quizQuestions=[];
+let quizQuestions = [];
 
 function shuffle(arr){
   return arr.slice().sort(()=>Math.random()-0.5);
 }
 
 function normalizeInputsFromServer(){
-  quizQuestions=shuffle(ASSET_INDEX.questions).slice(0,QUIZ_CONFIG.REQUIRED_QUIZ_COUNT);
+
+  quizQuestions =
+    shuffle(ASSET_INDEX.questions)
+    .slice(0, QUIZ_CONFIG.REQUIRED_QUIZ_COUNT);
+
 }
 
 function getStudent(){
+
   return{
     firstName:$("firstName").value.trim(),
     lastName:$("lastName").value.trim(),
     email:$("email").value.trim(),
     gradeSection:$("gradeSection").value
   };
+
 }
 
 function computeResult(){
-  const answers=[];
-  let score=0;
+
+  const answers = [];
+  let score = 0;
 
   for(const q of quizQuestions){
 
-    const selected=document.querySelector(`input[name="${q.id}"]:checked`);
-    const selectedTitle=selected ? selected.value : "";
+    const selected =
+      document.querySelector(`input[name="${q.id}"]:checked`);
 
-    const isCorrect=selectedTitle===q.correctImageTitle;
+    const selectedTitle =
+      selected ? selected.value : "";
+
+    const isCorrect =
+      selectedTitle === q.correctImageTitle;
 
     if(isCorrect) score++;
 
@@ -416,6 +457,7 @@ function computeResult(){
       correctImageTitle:q.correctImageTitle,
       isCorrect
     });
+
   }
 
   return{
@@ -423,121 +465,182 @@ function computeResult(){
     total:quizQuestions.length,
     answers
   };
+
 }
 
 async function buildQuizQuestions(){
 
-  const container=$("questions");
-  container.innerHTML="";
+  const container = $("questions");
 
-  for(let idx=0; idx<quizQuestions.length; idx++){
+  container.innerHTML = "";
 
-    const q=quizQuestions[idx];
+  for(let idx = 0; idx < quizQuestions.length; idx++){
 
-    const qDiv=document.createElement("div");
-    qDiv.className="q";
+    const q = quizQuestions[idx];
 
-    qDiv.innerHTML=`
+    const qDiv = document.createElement("div");
+
+    qDiv.className = "q";
+
+    qDiv.innerHTML = `
+
       <div class="qHeader">
-        <p><strong>${idx+1}. ${q.prompt}</strong></p>
+        <p><strong>${idx + 1}. ${q.prompt}</strong></p>
       </div>
 
       <div class="audioRow">
-        <button class="playBtn" type="button">▶ Play</button>
-        <span class="muted">You may replay as needed.</span>
+
+        <button class="playBtn" type="button">
+          ▶ Play Example
+        </button>
+
+        <span class="muted">
+          You may replay this example as many times as needed.
+        </span>
+
       </div>
+
     `;
 
-    const audio=document.createElement("audio");
-    audio.src=FILES[q.audioKey];
-    audio.preload="auto";
+    const audio = document.createElement("audio");
 
-    const playBtn=qDiv.querySelector(".playBtn");
+    audio.src = FILES[q.audioKey];
+    audio.preload = "auto";
 
-    playBtn.addEventListener("click",async()=>{
-      audio.currentTime=0;
-      await audio.play();
+    const playBtn = qDiv.querySelector(".playBtn");
+
+    playBtn.addEventListener("click", async () => {
+
+      try {
+
+        audio.pause();
+
+        audio.currentTime = 0;
+
+        await audio.play();
+
+      } catch(err) {
+
+        console.error("Audio playback error:", err);
+
+      }
+
     });
 
     qDiv.appendChild(audio);
 
-    const correct=ASSET_INDEX.images.find(i=>i.title===q.correctImageTitle);
+    const correct =
+      ASSET_INDEX.images.find(
+        i => i.title === q.correctImageTitle
+      );
 
-    const distractors=shuffle(
-      ASSET_INDEX.images.filter(i=>i!==correct)
-    ).slice(0,3);
+    const distractors =
+      shuffle(
+        ASSET_INDEX.images.filter(i => i !== correct)
+      ).slice(0,3);
 
-    const choices=shuffle([correct,...distractors]);
+    const choices =
+      shuffle([correct, ...distractors]);
 
-    const wrap=document.createElement("div");
-    wrap.className="choices";
+    const wrap =
+      document.createElement("div");
+
+    wrap.className = "choices";
 
     for(const imgObj of choices){
 
-      const label=document.createElement("label");
-      label.className="choice";
+      const label =
+        document.createElement("label");
 
-      label.innerHTML=`
-        <input type="radio" name="${q.id}" value="${imgObj.title}" required />
+      label.className = "choice";
+
+      label.innerHTML = `
+
+        <input
+          type="radio"
+          name="${q.id}"
+          value="${imgObj.title}"
+          required
+        />
+
         <img src="${FILES[imgObj.key]}" />
+
       `;
 
       wrap.appendChild(label);
+
     }
 
     qDiv.appendChild(wrap);
+
     container.appendChild(qDiv);
+
   }
+
 }
 
 async function submitResults(){
 
-  $("submitBtn").disabled=true;
+  $("submitBtn").disabled = true;
 
-  const payload={
+  const payload = {
+
     quizTitle:QUIZ_CONFIG.QUIZ_TITLE,
+
     submittedAtISO:new Date().toISOString(),
+
     student:getStudent(),
+
     result:computeResult(),
+
     userAgent:navigator.userAgent
+
   };
 
-  $("scorePreview").textContent=
+  $("scorePreview").textContent =
     `Score: ${payload.result.score} / ${payload.result.total}`;
 
   try{
 
-    const response=await fetch(
+    const response = await fetch(
+
       GOOGLE_APPS_SCRIPT_WEB_APP_URL,
+
       {
         method:"POST",
+
         headers:{
           "Content-Type":"application/json"
         },
+
         body:JSON.stringify(payload)
       }
+
     );
 
-    const data=await response.json();
+    const data = await response.json();
 
     if(!data.ok){
       throw new Error(data.error || "Submission failed");
     }
 
     $("quizCard").classList.add("hidden");
+
     $("doneCard").classList.remove("hidden");
 
-    $("doneMsg").textContent=
+    $("doneMsg").textContent =
       `Score: ${payload.result.score} / ${payload.result.total}`;
 
   }catch(err){
 
-    $("submitStatus").textContent=String(err);
-    $("submitStatus").className="status err";
+    $("submitStatus").textContent = String(err);
+
+    $("submitStatus").className = "status err";
 
   }
 
-  $("submitBtn").disabled=false;
+  $("submitBtn").disabled = false;
+
 }
 
 async function startQuizFlow(e){
@@ -549,27 +652,36 @@ async function startQuizFlow(e){
   await buildQuizQuestions();
 
   $("introCard").classList.add("hidden");
+
   $("quizCard").classList.remove("hidden");
+
 }
 
 function resetUIOnly(){
 
-  $("questions").innerHTML="";
+  $("questions").innerHTML = "";
 
   $("introCard").classList.remove("hidden");
+
   $("quizCard").classList.add("hidden");
+
   $("doneCard").classList.add("hidden");
+
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
 
-  $("introForm").addEventListener("submit",startQuizFlow);
+  $("introForm")
+    .addEventListener("submit",startQuizFlow);
 
-  $("submitBtn").addEventListener("click",submitResults);
+  $("submitBtn")
+    .addEventListener("click",submitResults);
 
-  $("resetBtn").addEventListener("click",resetUIOnly);
+  $("resetBtn")
+    .addEventListener("click",resetUIOnly);
 
-  $("doneResetBtn").addEventListener("click",resetUIOnly);
+  $("doneResetBtn")
+    .addEventListener("click",resetUIOnly);
 
 });
 
@@ -577,3 +689,4 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 </body>
 </html>
+```
