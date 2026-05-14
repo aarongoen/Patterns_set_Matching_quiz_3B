@@ -358,8 +358,8 @@
 <script>
 
 const GOOGLE_APPS_SCRIPT_WEB_APP_URL =
-"https://script.google.com/macros/s/AKfycbwN9Ip9jhELnj0Xvnq9OiSM3CzNFx9fvq0MiqYB-Z1CVQtvPp_mhJ5CkX7hSOToRfjq/exec";
-
+"https://script.google.com/macros/s/AKfycbwzz8xLaS-u2vf-jhUHKrCGuCVkIxgSGiyKCF-hNJULrfV9C5-wbXv1EjmMRJvRsCsm/exec"
+  
 const QUIZ_CONFIG = {
   QUIZ_TITLE:"Patterns Set 3B Matching Quiz",
   REQUIRED_QUIZ_COUNT:4
@@ -596,15 +596,15 @@ async function submitResults(){
 
   const payload = {
 
-    quizTitle:QUIZ_CONFIG.QUIZ_TITLE,
+    quizTitle: QUIZ_CONFIG.QUIZ_TITLE,
 
-    submittedAtISO:new Date().toISOString(),
+    submittedAtISO: new Date().toISOString(),
 
-    student:getStudent(),
+    student: getStudent(),
 
-    result:computeResult(),
+    result: computeResult(),
 
-    userAgent:navigator.userAgent
+    userAgent: navigator.userAgent
 
   };
 
@@ -613,27 +613,23 @@ async function submitResults(){
 
   try{
 
-    const response = await fetch(
-
+    await fetch(
       GOOGLE_APPS_SCRIPT_WEB_APP_URL,
-
       {
-        method:"POST",
+        method: "POST",
 
-        headers:{
-          "Content-Type":"application/json"
+        mode: "no-cors",
+
+        headers: {
+          "Content-Type": "text/plain"
         },
 
-        body:JSON.stringify(payload)
+        body: JSON.stringify(payload)
       }
-
     );
 
-    const data = await response.json();
-
-    if(!data.ok){
-      throw new Error(data.error || "Submission failed");
-    }
+    // no-cors prevents reading response JSON
+    // so assume success if no fetch error thrown
 
     $("quizCard").classList.add("hidden");
 
@@ -644,16 +640,17 @@ async function submitResults(){
 
   }catch(err){
 
-    $("submitStatus").textContent = String(err);
+    console.error(err);
 
-    $("submitStatus").className = "status err";
+    $("submitStatus").textContent =
+      "Unable to submit results.";
 
+    $("submitStatus").className =
+      "status err";
   }
 
   $("submitBtn").disabled = false;
-
 }
-
 async function startQuizFlow(e){
 
   e.preventDefault();
