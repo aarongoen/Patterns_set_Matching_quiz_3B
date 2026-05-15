@@ -594,9 +594,9 @@ audio{
 <script>
 
 const GOOGLE_APPS_SCRIPT_WEB_APP_URL =
-"https://script.google.com/macros/s/AKfycbyxZSjQrDuA9Uu3G3yx5X8Vl3lNcgFIDMmcMVos9pB66LKuiJTX6X3_rXRgkDpQfWc6/exec"
-  
-  const QUIZ_CONFIG = {
+"https://script.google.com/macros/s/AKfycbyxZSjQrDuA9Uu3G3yx5X8Vl3lNcgFIDMmcMVos9pB66LKuiJTX6X3_rXRgkDpQfWc6/exec";
+
+const QUIZ_CONFIG = {
   QUIZ_TITLE:"Patterns Set 3B Matching Quiz",
   REQUIRED_QUIZ_COUNT:8
 };
@@ -629,8 +629,6 @@ const ASSET_INDEX = {
 
 const FILES = {
 
-  // AUDIO
-
   "audio/3b.1.mp3":"https://www.dropbox.com/scl/fi/swufkev1pa5pc0drogcl9/3b.1.mp3?rlkey=y5tmhk8xppfvvskgdofedyd1u&raw=1",
   "audio/3b.2.mp3":"https://www.dropbox.com/scl/fi/8sscdaw5smj1275088edq/3b.2.mp3?rlkey=1fq2jmrrfryar2z2nmue01jan&raw=1",
   "audio/3b.3.mp3":"https://www.dropbox.com/scl/fi/jp844ubmmcj84wqo1b6bn/3b.3.mp3?rlkey=ha3lhcnco5piwexun6zo953ye&raw=1",
@@ -639,8 +637,6 @@ const FILES = {
   "audio/3b.6.mp3":"https://www.dropbox.com/scl/fi/kpacp1h4z9f4k7b9mi4v1/3b.6.mp3?rlkey=775xmw5j74sst3yco6hz9h4z1&raw=1",
   "audio/3b.7.mp3":"https://www.dropbox.com/scl/fi/62mwusdszmp6uyorno2y5/3b.7.mp3?rlkey=mhp1ycohrpgjvykhbg0juaqqe&raw=1",
   "audio/3b.8.mp3":"https://www.dropbox.com/scl/fi/6522pzyoesu926ebqc73v/3b.8.mp3?rlkey=j4z8yuqvcti1cx0ntiz6qoner&raw=1",
-
-  // IMAGES
 
   "img/3b.1.png":"https://www.dropbox.com/scl/fi/u3pbia8o838tb9qn5v73s/3b.1.png?rlkey=1khe8r17y2es65mz69ecxzz4l&raw=1",
   "img/3b.2.png":"https://www.dropbox.com/scl/fi/rwbt63vrv5oi9qvp9n4zy/3b.2.png?rlkey=34kya7zwx1meh2y1k11op7nxx&raw=1",
@@ -656,6 +652,20 @@ const FILES = {
 const $ = (id)=>document.getElementById(id);
 
 let quizQuestions = [];
+
+function setStatus(el,msg,type=""){
+
+  if(!el) return;
+
+  el.textContent = msg || "";
+
+  el.className = "status";
+
+  if(type){
+    el.classList.add(type);
+  }
+
+}
 
 function shuffle(arr){
   return arr.slice().sort(()=>Math.random()-0.5);
@@ -729,6 +739,8 @@ async function buildQuizQuestions(){
 
     qDiv.className = "q";
 
+    qDiv.dataset.qid = q.id;
+
     qDiv.innerHTML = `
 
       <div class="qHeader">
@@ -752,13 +764,14 @@ async function buildQuizQuestions(){
     const audio = document.createElement("audio");
 
     audio.src = FILES[q.audioKey];
+
     audio.preload = "auto";
 
     const playBtn = qDiv.querySelector(".playBtn");
 
     playBtn.addEventListener("click", async () => {
 
-      try {
+      try{
 
         audio.pause();
 
@@ -766,9 +779,9 @@ async function buildQuizQuestions(){
 
         await audio.play();
 
-      } catch(err) {
+      }catch(err){
 
-        console.error("Audio playback error:", err);
+        console.error(err);
 
       }
 
@@ -826,130 +839,180 @@ async function buildQuizQuestions(){
 
 }
 
-async function submitResults() {
-  setStatus($("submitStatus"), "", "");
-  $("submitBtn").disabled = true;
+function showReviewMode(answers){
 
-  for (const q of quizQuestions) {
-    if (!document.querySelector(`input[name="${q.id}"]:checked`)) {
-      setStatus($("submitStatus"), "Please answer every question before submitting.", "err");
-      $("submitBtn").disabled = false;
-      return;
-    }
-  }
+  document.querySelectorAll("input, button").forEach(el=>{
 
-  function showReviewMode(answers) {
-
-  // disable all controls
-  document.querySelectorAll("input, button").forEach(el => {
-    if (el.id !== "resetBtn" && el.id !== "doneResetBtn") {
+    if(
+      el.id !== "resetBtn" &&
+      el.id !== "doneResetBtn"
+    ){
       el.disabled = true;
     }
+
   });
 
-  answers.forEach(answer => {
+  answers.forEach(answer=>{
 
-    const qDiv = document.querySelector(`[data-qid="${answer.questionId}"]`);
-    if (!qDiv) return;
+    const qDiv =
+      document.querySelector(
+        `[data-qid="${answer.questionId}"]`
+      );
 
-    const selectedInput = qDiv.querySelector(
-      `input[value="${answer.selectedImageTitle}"]`
-    );
+    if(!qDiv) return;
 
-    const correctInput = qDiv.querySelector(
-      `input[value="${answer.correctImageTitle}"]`
-    );
+    const selectedInput =
+      qDiv.querySelector(
+        `input[value="${answer.selectedImageTitle}"]`
+      );
 
-    const selectedCard = selectedInput?.closest(".choice");
-    const correctCard = correctInput?.closest(".choice");
+    const correctInput =
+      qDiv.querySelector(
+        `input[value="${answer.correctImageTitle}"]`
+      );
 
-    // CORRECT ANSWER
-    if (answer.isCorrect) {
+    const selectedCard =
+      selectedInput?.closest(".choice");
 
-      if (selectedCard) {
+    const correctCard =
+      correctInput?.closest(".choice");
+
+    if(answer.isCorrect){
+
+      if(selectedCard){
+
         selectedCard.classList.add("reviewCorrect");
 
-        const badge = document.createElement("div");
+        const badge =
+          document.createElement("div");
+
         badge.className = "correctBadge";
+
         badge.innerHTML = "✓";
+
         selectedCard.appendChild(badge);
+
       }
 
-      const label = document.createElement("div");
-      label.className = "reviewLabel correct";
-      label.textContent = "Correct";
+    }else{
 
-      qDiv.appendChild(label);
-    }
+      if(selectedCard){
 
-    // INCORRECT ANSWER
-    else {
-
-      if (selectedCard) {
         selectedCard.classList.add("reviewIncorrect");
 
-        const badge = document.createElement("div");
+        const badge =
+          document.createElement("div");
+
         badge.className = "incorrectBadge";
+
         badge.innerHTML = "✕";
+
         selectedCard.appendChild(badge);
+
       }
 
-      if (correctCard) {
+      if(correctCard){
+
         correctCard.classList.add("reviewCorrect");
 
-        const badge = document.createElement("div");
+        const badge =
+          document.createElement("div");
+
         badge.className = "correctBadge";
+
         badge.innerHTML = "✓";
+
         correctCard.appendChild(badge);
+
       }
 
-      if (correctInput) {
+      if(correctInput){
+
         correctInput.checked = true;
-        correctInput.classList.add("correctAnswerDot");
+
       }
 
-      const label = document.createElement("div");
-      label.className = "reviewLabel incorrect";
-      label.textContent = "Incorrect — correct answer shown in green.";
-
-      qDiv.appendChild(label);
     }
+
   });
+
 }
 
+async function submitResults(){
 
-  const payload = {
-    quizTitle: QUIZ_CONFIG.QUIZ_TITLE,
-    submittedAtISO: new Date().toISOString(),
-    student: getStudent(),
-    result: computeResult(),
-    userAgent: navigator.userAgent
-  };
+  setStatus($("submitStatus"),"", "");
 
-  $("scorePreview").textContent = `Score: ${payload.result.score} / ${payload.result.total}`;
+  $("submitBtn").disabled = true;
 
-  try {
-    setStatus($("submitStatus"), "Submitting…", "");
+  for(const q of quizQuestions){
 
-    const response = await fetch(GOOGLE_APPS_SCRIPT_WEB_APP_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-      body: JSON.stringify(payload)
-    });
+    if(!document.querySelector(`input[name="${q.id}"]:checked`)){
 
-    const text = await response.text();
-    let data = {};
+      setStatus(
+        $("submitStatus"),
+        "Please answer every question before submitting.",
+        "err"
+      );
 
-    try {
-      data = JSON.parse(text);
-    } catch(e) {
-      console.error("Non-JSON response:", text);
+      $("submitBtn").disabled = false;
+
+      return;
+
     }
 
-    if (!response.ok || data.ok === false) {
-      throw new Error(data.error || `HTTP ${response.status}`);
+  }
+
+  const payload = {
+
+    quizTitle: QUIZ_CONFIG.QUIZ_TITLE,
+
+    submittedAtISO: new Date().toISOString(),
+
+    student: getStudent(),
+
+    result: computeResult(),
+
+    userAgent: navigator.userAgent
+
+  };
+
+  $("scorePreview").textContent =
+    `Score: ${payload.result.score} / ${payload.result.total}`;
+
+  try{
+
+    setStatus(
+      $("submitStatus"),
+      "Submitting…"
+    );
+
+    const response = await fetch(
+      GOOGLE_APPS_SCRIPT_WEB_APP_URL,
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"text/plain;charset=utf-8"
+        },
+        body:JSON.stringify(payload)
+      }
+    );
+
+    const text = await response.text();
+
+    let data = {};
+
+    try{
+      data = JSON.parse(text);
+    }catch(e){
+      console.error(text);
+    }
+
+    if(!response.ok || data.ok === false){
+
+      throw new Error(
+        data.error || `HTTP ${response.status}`
+      );
+
     }
 
     showReviewMode(payload.result.answers);
@@ -960,17 +1023,20 @@ async function submitResults() {
       "ok"
     );
 
-  } catch (err) {
+  }catch(err){
+
     console.error(err);
 
     setStatus(
       $("submitStatus"),
-      "Submission failed. Check your Apps Script deployment permissions.",
+      "Submission failed.",
       "err"
     );
 
     $("submitBtn").disabled = false;
+
   }
+
 }
 
 async function startQuizFlow(e){
@@ -1016,6 +1082,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 });
 
 </script>
-
+  
 </body>
 </html>
