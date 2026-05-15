@@ -838,6 +838,86 @@ async function submitResults() {
     }
   }
 
+  function showReviewMode(answers) {
+
+  // disable all controls
+  document.querySelectorAll("input, button").forEach(el => {
+    if (el.id !== "resetBtn" && el.id !== "doneResetBtn") {
+      el.disabled = true;
+    }
+  });
+
+  answers.forEach(answer => {
+
+    const qDiv = document.querySelector(`[data-qid="${answer.questionId}"]`);
+    if (!qDiv) return;
+
+    const selectedInput = qDiv.querySelector(
+      `input[value="${answer.selectedImageTitle}"]`
+    );
+
+    const correctInput = qDiv.querySelector(
+      `input[value="${answer.correctImageTitle}"]`
+    );
+
+    const selectedCard = selectedInput?.closest(".choice");
+    const correctCard = correctInput?.closest(".choice");
+
+    // CORRECT ANSWER
+    if (answer.isCorrect) {
+
+      if (selectedCard) {
+        selectedCard.classList.add("reviewCorrect");
+
+        const badge = document.createElement("div");
+        badge.className = "correctBadge";
+        badge.innerHTML = "✓";
+        selectedCard.appendChild(badge);
+      }
+
+      const label = document.createElement("div");
+      label.className = "reviewLabel correct";
+      label.textContent = "Correct";
+
+      qDiv.appendChild(label);
+    }
+
+    // INCORRECT ANSWER
+    else {
+
+      if (selectedCard) {
+        selectedCard.classList.add("reviewIncorrect");
+
+        const badge = document.createElement("div");
+        badge.className = "incorrectBadge";
+        badge.innerHTML = "✕";
+        selectedCard.appendChild(badge);
+      }
+
+      if (correctCard) {
+        correctCard.classList.add("reviewCorrect");
+
+        const badge = document.createElement("div");
+        badge.className = "correctBadge";
+        badge.innerHTML = "✓";
+        correctCard.appendChild(badge);
+      }
+
+      if (correctInput) {
+        correctInput.checked = true;
+        correctInput.classList.add("correctAnswerDot");
+      }
+
+      const label = document.createElement("div");
+      label.className = "reviewLabel incorrect";
+      label.textContent = "Incorrect — correct answer shown in green.";
+
+      qDiv.appendChild(label);
+    }
+  });
+}
+
+
   const payload = {
     quizTitle: QUIZ_CONFIG.QUIZ_TITLE,
     submittedAtISO: new Date().toISOString(),
