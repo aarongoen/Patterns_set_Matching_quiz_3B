@@ -591,6 +591,599 @@ audio{
 
 </div>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Patterns Set 3B Matching Quiz</title>
+
+  <style>
+
+   :root{
+  /* NCS logo-inspired palette */
+  --ncs-purple:#5B2C83;
+  --ncs-purple-dark:#442061;
+  --ncs-gold:#E5B223;
+  --ncs-gold-light:#F2CC59;
+
+  --bg:#faf8fc;
+  --card:#ffffff;
+  --border:#e7deef;
+  --muted:#6e5d7d;
+
+  --danger:#b00020;
+  --ok:#0b6;
+
+  --gap:14px;
+  --radius:14px;
+  --shadow:0 8px 20px rgba(91,44,131,.10);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  padding:18px;
+  margin:0;
+
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(229,178,35,.20), transparent 60%),
+    radial-gradient(900px 500px at 90% -20%, rgba(91,44,131,.16), transparent 55%),
+    var(--bg);
+
+  color:#111827;
+}
+
+.shell{
+  max-width:1200px;
+  margin:0 auto;
+}
+
+.brandbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  padding:14px 16px;
+  border:1px solid var(--border);
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--ncs-purple),
+      var(--ncs-purple-dark)
+    );
+
+  color:#fff;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  margin-bottom:14px;
+}
+
+.crest{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--ncs-gold),
+      var(--ncs-gold-light)
+    );
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:#4a2b00;
+  font-weight:800;
+  letter-spacing:.5px;
+  flex:0 0 auto;
+}
+
+.brandtext{
+  line-height:1.1;
+}
+
+.brandtext .org{
+  font-size:12px;
+  opacity:.92;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+}
+
+.brandtext .title{
+  font-size:18px;
+  font-weight:800;
+  margin-top:3px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px;
+  margin:0 auto 14px auto;
+  box-shadow:var(--shadow);
+}
+
+h2{
+  margin:0 0 8px 0;
+  font-size:22px;
+}
+
+.muted{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.hidden{
+  display:none;
+}
+
+.row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--gap);
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:220px;
+  flex:1;
+}
+
+label{
+  font-size:12px;
+  color:var(--muted);
+}
+
+input[type="text"],
+input[type="email"],
+select{
+  padding:12px 12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  font-size:14px;
+  background:#fff;
+  outline:none;
+}
+
+input:focus,
+select:focus{
+  border-color:rgba(91,44,131,.35);
+  box-shadow:0 0 0 4px rgba(91,44,131,.10);
+}
+
+button{
+  padding:12px 16px;
+  border:1px solid transparent;
+  border-radius:12px;
+
+  background:var(--ncs-purple);
+
+  color:#fff;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:700;
+}
+
+button.secondary{
+  background:#fff;
+  color:var(--ncs-purple);
+  border:1px solid var(--border);
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.status{
+  margin-top:10px;
+  font-size:13px;
+  white-space:pre-line;
+}
+
+.status.ok{
+  color:var(--ok);
+}
+
+.status.err{
+  color:var(--danger);
+}
+
+.topActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+
+  padding:5px 10px;
+  border-radius:999px;
+
+  background:rgba(229,178,35,.18);
+  border:1px solid rgba(229,178,35,.35);
+
+  font-size:12px;
+  color:#6a4b00;
+  font-weight:700;
+}
+
+.divider{
+  height:1px;
+  background:var(--border);
+  margin:12px 0;
+}
+
+.q{
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px solid var(--border);
+}
+
+.qHeader{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+
+.qTitle{
+  font-weight:800;
+  margin:0;
+  font-size:18px;
+}
+
+.onceTag{
+  font-size:12px;
+  padding:4px 8px;
+  border-radius:999px;
+
+  border:1px solid rgba(91,44,131,.18);
+  background:rgba(91,44,131,.06);
+
+  color:var(--ncs-purple);
+  white-space:nowrap;
+}
+
+.audioRow{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.playBtn{
+  background:
+    linear-gradient(
+      135deg,
+      var(--ncs-gold),
+      var(--ncs-gold-light)
+    );
+
+  color:#4a2b00;
+  font-weight:700;
+  border:1px solid rgba(0,0,0,.08);
+}
+
+.playBtn:disabled{
+  opacity:.5;
+}
+
+audio{
+  width:min(520px, 100%);
+}
+
+.choices{
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(320px, 1fr)
+    );
+
+  gap:18px;
+  margin-top:18px;
+}
+
+.choice{
+  border:1px solid var(--border);
+  border-radius:18px;
+
+  padding:12px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+
+  cursor:pointer;
+  background:#fff;
+
+  transition:
+    transform .08s ease,
+    box-shadow .08s ease,
+    border-color .08s ease;
+
+  user-select:none;
+}
+
+.choice:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 18px rgba(91,44,131,.10);
+}
+
+.choice input{
+  transform:scale(1.3);
+  margin-bottom:10px;
+}
+
+.choice img{
+  width:100%;
+  max-width:420px;
+  height:auto;
+  display:block;
+  border-radius:12px;
+}
+
+.choice.selected{
+  border-color:rgba(91,44,131,.45);
+  box-shadow:0 0 0 4px rgba(91,44,131,.12);
+}
+
+.spacer{
+  height:6px;
+}
+
+/* Progress */
+
+.progressWrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.progressBar{
+  width:min(460px, 100%);
+  height:10px;
+
+  background:#f1edf6;
+
+  border-radius:999px;
+  overflow:hidden;
+
+  border:1px solid var(--border);
+}
+
+.progressFill{
+  height:100%;
+  width:0%;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--ncs-gold),
+      var(--ncs-gold-light)
+    );
+
+  transition:width .18s ease;
+}
+
+    /* REVIEW MODE */
+.reviewCorrect{
+  border:3px solid #22c55e !important;
+  box-shadow:0 0 0 5px rgba(34,197,94,.15) !important;
+}
+
+.reviewIncorrect{
+  border:3px solid #ef4444 !important;
+  box-shadow:0 0 0 5px rgba(239,68,68,.15) !important;
+}
+
+.correctBadge,
+.incorrectBadge{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:36px;
+  height:36px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  font-weight:800;
+  color:#fff;
+}
+
+.correctBadge{
+  background:#22c55e;
+}
+
+.incorrectBadge{
+  background:#ef4444;
+}
+
+.choice{
+  position:relative;
+}
+
+.correctAnswerDot{
+  outline:4px solid rgba(34,197,94,.35);
+  border-radius:999px;
+}
+
+.reviewLabel{
+  margin-top:8px;
+  font-size:14px;
+  font-weight:700;
+}
+
+.reviewLabel.correct{
+  color:#16a34a;
+}
+
+.reviewLabel.incorrect{
+  color:#dc2626;
+}
+
+  </style>
+</head>
+
+<body>
+
+<div class="shell">
+
+  <div class="brandbar">
+
+    <div class="crest">NCS</div>
+
+    <div>
+      <div style="font-size:12px;opacity:.85;">
+        National Cathedral School
+      </div>
+
+      <div style="font-weight:bold;">
+        Patterns — Set 3B Matching Quiz
+      </div>
+    </div>
+
+  </div>
+
+  <!-- INTRO -->
+
+  <div id="introCard" class="card">
+
+    <h2>Welcome</h2>
+
+    <div class="muted">
+      Listen to each example and choose the matching image.
+      You may replay examples as needed.
+    </div>
+
+    <div style="height:12px;"></div>
+
+    <form id="introForm">
+
+      <div class="row">
+
+        <div class="field">
+          <label>First Name</label>
+          <input id="firstName" type="text" required />
+        </div>
+
+        <div class="field">
+          <label>Last Name</label>
+          <input id="lastName" type="text" required />
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input id="email" type="email" required />
+        </div>
+
+        <div class="field">
+
+          <label>Grade / Section</label>
+
+          <select id="gradeSection" required>
+            <option value="" selected disabled>Select…</option>
+            <option value="4WY">4WY</option>
+            <option value="4XZ">4XZ</option>
+            <option value="5A">5A</option>
+            <option value="5B">5B</option>
+            <option value="5C">5C</option>
+          </select>
+
+        </div>
+
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="topActions">
+        <button id="startBtn" type="submit">
+          Start Quiz
+        </button>
+
+        <span class="pill">
+          8 Questions
+        </span>
+      </div>
+
+      <div id="introStatus" class="status"></div>
+
+    </form>
+
+  </div>
+
+  <!-- QUIZ -->
+
+  <div id="quizCard" class="card hidden">
+
+    <div class="topActions">
+
+      <h2 style="margin-right:auto;">
+        Quiz
+      </h2>
+
+      <button id="resetBtn" class="secondary" type="button">
+        Start Over
+      </button>
+
+    </div>
+
+    <div id="questions"></div>
+
+    <div class="divider"></div>
+
+    <div class="topActions">
+
+      <button id="submitBtn" type="button">
+        Submit
+      </button>
+
+      <span id="scorePreview"></span>
+
+    </div>
+
+    <div id="submitStatus" class="status"></div>
+
+  </div>
+
+  <!-- DONE -->
+
+  <div id="doneCard" class="card hidden">
+
+    <h2>Finished!</h2>
+
+    <div id="doneMsg"></div>
+
+    <div style="height:12px;"></div>
+
+    <button id="doneResetBtn" class="secondary">
+      Start Over
+    </button>
+
+  </div>
+
+</div>
+
 <script>
 
 const GOOGLE_APPS_SCRIPT_WEB_APP_URL =
@@ -1081,6 +1674,10 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 });
 
+</script>
+  
+</body>
+</html>
 </script>
   
 </body>
