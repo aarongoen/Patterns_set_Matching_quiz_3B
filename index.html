@@ -845,13 +845,12 @@ async function submitQuiz(){
 
   try{
 
-  const response = await fetch(
+const response = await fetch(
   GOOGLE_APPS_SCRIPT_WEB_APP_URL,
   {
     method: "POST",
-    mode: "cors",
     headers: {
-      "Content-Type": "text/plain;charset=utf-8"
+      "Content-Type": "application/json"
     },
     body: JSON.stringify(payload)
   }
