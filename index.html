@@ -700,11 +700,17 @@ qDiv.innerHTML = `
         audio.currentTime = 0;
         await audio.play();
 
-      }catch(err){
+    }catch(err){
 
-        console.error(err);
+  console.error("FULL ERROR:", err);
 
-      }
+  $("submitStatus").textContent =
+    "Submission failed: " + err;
+
+  $("submitStatus").className =
+    "status err";
+
+}
 
     });
 
@@ -865,14 +871,17 @@ $("submitStatus").textContent =
 $("submitStatus").className =
   "status ok";
 
-  }catch(err){
+}catch(err){
 
-    console.error(err);
+  console.error("FULL ERROR:", err);
 
-    alert("Submission failed.");
+  $("submitStatus").textContent =
+    "Submission failed: " + err;
 
-    return;
-  }
+  $("submitStatus").className =
+    "status err";
+
+}
 
 }
 
