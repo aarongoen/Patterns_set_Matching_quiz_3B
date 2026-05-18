@@ -780,7 +780,165 @@ async function startQuizFlow(e){
 
 }
 
-  document.addEventListener("DOMContentLoaded",()=>{
+async function submitQuiz(){
+
+  let score = 0;
+
+  const answers = [];
+
+  for(const q of quizQuestions){
+
+    const selected =
+      document.querySelector(
+        `input[name="${q.id}"]:checked`
+      );
+
+    if(!selected){
+
+      alert("Please answer every question.");
+
+      return;
+    }
+
+    const selectedTitle = selected.value;
+
+    const isCorrect =
+      selectedTitle === q.correctImageTitle;
+
+    if(isCorrect) score++;
+
+    answers.push({
+      questionId:q.id,
+      selectedImageTitle:selectedTitle,
+      correctImageTitle:q.correctImageTitle,
+      isCorrect
+    });
+
+  }
+
+  $("scorePreview").textContent =
+    `Score: ${score} / ${quizQuestions.length}`;
+
+  const payload = {
+
+    quizTitle:QUIZ_CONFIG.QUIZ_TITLE,
+
+    submittedAtISO:new Date().toISOString(),
+
+    student:{
+      firstName:$("firstName").value.trim(),
+      lastName:$("lastName").value.trim(),
+      email:$("email").value.trim(),
+      gradeSection:$("gradeSection").value
+    },
+
+    result:{
+      score,
+      total:quizQuestions.length,
+      answers
+    },
+
+    userAgent:navigator.userAgent
+
+  };
+
+  try{
+
+    await fetch(
+      GOOGLE_APPS_SCRIPT_WEB_APP_URL,
+      {
+        method:"POST",
+        mode:"no-cors",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify(payload)
+      }
+    );
+
+  }catch(err){
+
+    console.error(err);
+
+  }
+
+  showReview(answers);
+
+}
+
+function showReview(answers){
+
+  for(const answer of answers){
+
+    const qDiv =
+      document.querySelectorAll(".q")[
+        answers.indexOf(answer)
+      ];
+
+    if(!qDiv) continue;
+
+    const choices =
+      qDiv.querySelectorAll(".choice");
+
+    choices.forEach(choice=>{
+
+      const input =
+        choice.querySelector("input");
+
+      if(!input) return;
+
+      if(input.value === answer.selectedImageTitle){
+
+        if(answer.isCorrect){
+
+          choice.classList.add("reviewCorrect");
+
+          const badge =
+            document.createElement("div");
+
+          badge.className = "correctBadge";
+
+          badge.textContent = "✓";
+
+          choice.appendChild(badge);
+
+        }else{
+
+          choice.classList.add("reviewIncorrect");
+
+          const badge =
+            document.createElement("div");
+
+          badge.className = "incorrectBadge";
+
+          badge.textContent = "✕";
+
+          choice.appendChild(badge);
+
+        }
+
+      }
+
+      if(
+        input.value === answer.correctImageTitle &&
+        !answer.isCorrect
+      ){
+
+        input.checked = true;
+
+        input.classList.add("correctAnswerDot");
+
+      }
+
+    });
+
+  }
+
+  $("submitBtn").disabled = true;
+
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
 
   $("introForm")
     .addEventListener(
@@ -795,14 +953,6 @@ async function startQuizFlow(e){
     );
 
 });
-  
-document.addEventListener("DOMContentLoaded",()=>{
-
-  $("introForm")
-    .addEventListener("submit",startQuizFlow);
-
-});
-
 </script>
 
 </body>
