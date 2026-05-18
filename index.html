@@ -591,26 +591,7 @@ audio{
 
 </div>
 
-  Your current file is missing the entire `<script>` section. Right now the HTML ends immediately after:
-
-```html
-</body>
-</html>
-```
-
-which means:
-
-* no quiz logic runs
-* no buttons work
-* no second page appears
-* no audio works
-* no submission works
-
-You accidentally deleted all the JavaScript. 
-
-Add this ENTIRE block immediately ABOVE `</body>`:
-
-```html
+ 
 <script>
 
 const GOOGLE_APPS_SCRIPT_WEB_APP_URL =
