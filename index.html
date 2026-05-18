@@ -780,6 +780,22 @@ async function startQuizFlow(e){
 
 }
 
+  document.addEventListener("DOMContentLoaded",()=>{
+
+  $("introForm")
+    .addEventListener(
+      "submit",
+      startQuizFlow
+    );
+
+  $("submitBtn")
+    .addEventListener(
+      "click",
+      submitQuiz
+    );
+
+});
+  
 document.addEventListener("DOMContentLoaded",()=>{
 
   $("introForm")
