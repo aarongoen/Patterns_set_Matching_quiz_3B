@@ -680,21 +680,13 @@ async function buildQuizQuestions(){
 
     qDiv.className = "q";
 
-    qDiv.innerHTML = `
-      <div class="qHeader">
-        <p class="qTitle">${idx + 1}. ${q.prompt}</p>
-      </div>
-
-      <div class="audioRow">
-        <button class="playBtn" type="button">
-          ▶ Play Example
-        </button>
-
-        <span class="muted">
-          You may replay this example as many times as needed.
-        </span>
-      </div>
-    `;
+qDiv.innerHTML = `
+  <div class="audioRow">
+    <button class="playBtn" type="button">
+      ▶ Play Example
+    </button>
+  </div>
+`;
 
     const audio = document.createElement("audio");
 
