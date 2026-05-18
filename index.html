@@ -798,7 +798,6 @@ async function submitQuiz(){
     if(!selected){
 
       alert("Please answer every question.");
-
       return;
     }
 
@@ -846,28 +845,35 @@ async function submitQuiz(){
 
   try{
 
-try{
+    const response = await fetch(
+      GOOGLE_APPS_SCRIPT_WEB_APP_URL,
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"text/plain;charset=utf-8"
+        },
+        body:JSON.stringify(payload)
+      }
+    );
 
-  const response = await fetch(
-    GOOGLE_APPS_SCRIPT_WEB_APP_URL,
-    {
-      method:"POST",
-      headers:{
-        "Content-Type":"text/plain;charset=utf-8"
-      },
-      body:JSON.stringify(payload)
+    const data = await response.json();
+
+    console.log(data);
+
+    if(!data.ok){
+      throw new Error(data.error || "Submission failed.");
     }
-  );
 
-  console.log("Submitted");
+    showReview(answers);
 
-}catch(err){
+  }catch(err){
 
-  console.error(err);
+    console.error(err);
 
-  alert("Submission failed.");
+    alert("Submission failed.");
 
-  return;
+    return;
+  }
 
 }
 
@@ -929,9 +935,7 @@ function showReview(answers){
         !answer.isCorrect
       ){
 
-        input.checked = true;
-
-        input.classList.add("correctAnswerDot");
+        choice.classList.add("reviewCorrect");
 
       }
 
@@ -942,7 +946,6 @@ function showReview(answers){
   $("submitBtn").disabled = true;
 
 }
-
 document.addEventListener("DOMContentLoaded",()=>{
 
   $("introForm")
