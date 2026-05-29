@@ -534,13 +534,19 @@ async function startQuizFlow(e){
 
 }
 
+  async function submitQuiz(){
+
+  alert("Submit button is connected.");
+
+}
+  
 document.addEventListener("DOMContentLoaded",()=>{
 
   $("introForm")
-    .addEventListener(
-      "submit",
-      startQuizFlow
-    );
+    .addEventListener("submit", startQuizFlow);
+
+  $("submitBtn")
+    .addEventListener("click", submitQuiz);
 
 });
 
