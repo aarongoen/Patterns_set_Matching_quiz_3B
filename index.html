@@ -408,7 +408,6 @@ const GOOGLE_APPS_SCRIPT_WEB_APP_URL =
 "https://script.google.com/macros/s/AKfycbyxZSjQrDuA9Uu3G3yx5X8Vl3lNcgFIDMmcMVos9pB66LKuiJTX6X3_rXRgkDpQfWc6/exec";
 
 const FILES = {
-
   "audio/3b.1.mp3":"audio/3b.1.mp3",
   "audio/3b.2.mp3":"audio/3b.2.mp3",
   "audio/3b.3.mp3":"audio/3b.3.mp3",
@@ -426,36 +425,32 @@ const FILES = {
   "img/3b.6.png":"img/3b.6.png",
   "img/3b.7.png":"img/3b.7.png",
   "img/3b.8.png":"img/3b.8.png"
-
 };
-  
+
 const QUESTIONS = [
   "3b.1","3b.2","3b.3","3b.4",
   "3b.5","3b.6","3b.7","3b.8"
 ];
 
-  let activeQuestions = [];
+let activeQuestions = [];
 
-const $ = (id)=>document.getElementById(id);
+const $ = id => document.getElementById(id);
 
 function shuffle(arr){
-  return arr.slice().sort(()=>Math.random()-0.5);
+  return arr.slice().sort(() => Math.random() - 0.5);
 }
 
 async function startQuizFlow(e){
-
   e.preventDefault();
 
   const questionsDiv = $("questions");
-
   questionsDiv.innerHTML = "";
 
   activeQuestions = shuffle(QUESTIONS);
-  
+
   activeQuestions.forEach((qName, idx)=>{
 
     const qDiv = document.createElement("div");
-
     qDiv.className = "q";
 
     const choices = shuffle(QUESTIONS).slice(0,4);
@@ -465,84 +460,57 @@ async function startQuizFlow(e){
     }
 
     qDiv.innerHTML = `
-      <button class="playBtn" type="button">
-        ▶ Play Example
-      </button>
-
+      <button class="playBtn" type="button">▶ Play Example</button>
       <div class="choices"></div>
     `;
 
-    const audio = new Audio(
-      FILES[`audio/${qName}.mp3`]
-    );
+    const audio = new Audio(FILES[`audio/${qName}.mp3`]);
 
-    qDiv.querySelector(".playBtn")
-      .addEventListener("click", async ()=>{
+    qDiv.querySelector(".playBtn").addEventListener("click", async ()=>{
+      try{
+        audio.pause();
+        audio.currentTime = 0;
+        await audio.play();
+      }catch(err){
+        console.error(err);
+      }
+    });
 
-        try{
-          audio.pause();
-          audio.currentTime = 0;
-          await audio.play();
-        }catch(err){
-          console.error(err);
-        }
-
-      });
-
-    const choicesDiv =
-      qDiv.querySelector(".choices");
+    const choicesDiv = qDiv.querySelector(".choices");
 
     shuffle(choices).forEach(choice=>{
-
-      const label =
-        document.createElement("label");
-
+      const label = document.createElement("label");
       label.className = "choice";
 
       label.innerHTML = `
-        <input
-          type="radio"
-          name="Q${idx}"
-          value="${choice}"
-        />
-
-        <img
-          src="${FILES[`img/${choice}.png`]}"
-        />
+        <input type="radio" name="Q${idx}" value="${choice}" />
+        <img src="${FILES[`img/${choice}.png`]}" />
       `;
 
       label.addEventListener("click",()=>{
-
         label.querySelector("input").checked = true;
 
-        choicesDiv
-          .querySelectorAll(".choice")
-          .forEach(c=>c.classList.remove("selected"));
+        choicesDiv.querySelectorAll(".choice")
+          .forEach(c => c.classList.remove("selected"));
 
         label.classList.add("selected");
-
       });
 
       choicesDiv.appendChild(label);
-
     });
 
     questionsDiv.appendChild(qDiv);
-
   });
 
   $("introCard").classList.add("hidden");
   $("quizCard").classList.remove("hidden");
-
 }
 
 async function submitQuiz(){
-
   let score = 0;
   const answers = [];
 
   for(let idx = 0; idx < activeQuestions.length; idx++){
-
     const qName = activeQuestions[idx];
     const selected = document.querySelector(`input[name="Q${idx}"]:checked`);
 
@@ -586,12 +554,17 @@ async function submitQuiz(){
   $("scorePreview").textContent =
     `Score: ${score} / ${activeQuestions.length}`;
 
-  $("submitStatus").textContent = "Submitting…";
+  // Show answers immediately, even if export fails
+  showReview(answers);
+  $("submitBtn").disabled = true;
+
+  $("submitStatus").textContent = "Submitting results…";
   $("submitStatus").className = "status";
 
   try{
     await fetch(GOOGLE_APPS_SCRIPT_WEB_APP_URL,{
       method:"POST",
+      mode:"no-cors",
       body:JSON.stringify(payload)
     });
 
@@ -599,83 +572,25 @@ async function submitQuiz(){
       "Results submitted successfully.";
     $("submitStatus").className = "status ok";
 
-    showReview(answers);
-    $("submitBtn").disabled = true;
-
   }catch(err){
     console.error(err);
+
     $("submitStatus").textContent =
-      "Submission failed: " + err;
+      "Answers shown below. Export may not have completed: " + err;
     $("submitStatus").className = "status err";
   }
 }
 
-  const payload = {
-    quizTitle:"Patterns Set 3B Matching Quiz",
-    submittedAtISO:new Date().toISOString(),
-    student:{
-      firstName:$("firstName").value.trim(),
-      lastName:$("lastName").value.trim(),
-      email:$("email").value.trim(),
-      gradeSection:$("gradeSection").value
-    },
-    result:{
-      score,
-      total:QUESTIONS.length,
-      answers
-    },
-    userAgent:navigator.userAgent
-  };
-
-  $("scorePreview").textContent =
-    `Score: ${score} / ${QUESTIONS.length}`;
-
-  try{
-
-    await fetch(
-      GOOGLE_APPS_SCRIPT_WEB_APP_URL,
-      {
-        method:"POST",
-        body:JSON.stringify(payload)
-      }
-    );
-
-    $("submitStatus").textContent =
-      "Results submitted successfully.";
-
-    $("submitStatus").className =
-      "status ok";
-
-    showReview(answers);
-
-    $("submitBtn").disabled = true;
-
-  }catch(err){
-
-    console.error(err);
-
-    $("submitStatus").textContent =
-      "Submission failed: " + err;
-
-    $("submitStatus").className =
-      "status err";
-  }
-}
-
-  function showReview(answers){
-
+function showReview(answers){
   answers.forEach((answer, idx)=>{
-
     const qDiv = document.querySelectorAll(".q")[idx];
     if(!qDiv) return;
 
     qDiv.querySelectorAll(".choice").forEach(choice=>{
-
       const input = choice.querySelector("input");
       if(!input) return;
 
       if(input.value + ".png" === answer.selectedImageTitle){
-
         choice.classList.add(
           answer.isCorrect ? "reviewCorrect" : "reviewIncorrect"
         );
@@ -687,10 +602,7 @@ async function submitQuiz(){
         choice.appendChild(badge);
       }
 
-      if(
-        !answer.isCorrect &&
-        input.value + ".png" === answer.correctImageTitle
-      ){
+      if(!answer.isCorrect && input.value + ".png" === answer.correctImageTitle){
         choice.classList.add("reviewCorrect");
 
         const badge = document.createElement("div");
@@ -698,20 +610,13 @@ async function submitQuiz(){
         badge.textContent = "✓";
         choice.appendChild(badge);
       }
-
     });
-
   });
 }
-  
+
 document.addEventListener("DOMContentLoaded",()=>{
-
-  $("introForm")
-    .addEventListener("submit", startQuizFlow);
-
-  $("submitBtn")
-    .addEventListener("click", submitQuiz);
-
+  $("introForm").addEventListener("submit", startQuizFlow);
+  $("submitBtn").addEventListener("click", submitQuiz);
 });
 
 </script>
