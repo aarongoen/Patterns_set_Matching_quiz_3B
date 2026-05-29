@@ -534,10 +534,128 @@ async function startQuizFlow(e){
 
 }
 
-  async function submitQuiz(){
+async function submitQuiz(){
 
-  alert("Submit button is connected.");
+  let score = 0;
+  const answers = [];
 
+  QUESTIONS.forEach((qName, idx)=>{
+
+    const selected =
+      document.querySelector(`input[name="Q${idx}"]:checked`);
+
+    if(!selected){
+      alert("Please answer every question before submitting.");
+      throw new Error("Missing answer");
+    }
+
+    const selectedTitle = selected.value;
+    const correctTitle = qName;
+    const isCorrect = selectedTitle === correctTitle;
+
+    if(isCorrect) score++;
+
+    answers.push({
+      questionId:`Q${idx + 1}`,
+      selectedImageTitle:selectedTitle + ".png",
+      correctImageTitle:correctTitle + ".png",
+      isCorrect
+    });
+
+  });
+
+  const payload = {
+    quizTitle:"Patterns Set 3B Matching Quiz",
+    submittedAtISO:new Date().toISOString(),
+    student:{
+      firstName:$("firstName").value.trim(),
+      lastName:$("lastName").value.trim(),
+      email:$("email").value.trim(),
+      gradeSection:$("gradeSection").value
+    },
+    result:{
+      score,
+      total:QUESTIONS.length,
+      answers
+    },
+    userAgent:navigator.userAgent
+  };
+
+  $("scorePreview").textContent =
+    `Score: ${score} / ${QUESTIONS.length}`;
+
+  try{
+
+    await fetch(
+      GOOGLE_APPS_SCRIPT_WEB_APP_URL,
+      {
+        method:"POST",
+        body:JSON.stringify(payload)
+      }
+    );
+
+    $("submitStatus").textContent =
+      "Results submitted successfully.";
+
+    $("submitStatus").className =
+      "status ok";
+
+    showReview(answers);
+
+    $("submitBtn").disabled = true;
+
+  }catch(err){
+
+    console.error(err);
+
+    $("submitStatus").textContent =
+      "Submission failed: " + err;
+
+    $("submitStatus").className =
+      "status err";
+  }
+}
+
+  function showReview(answers){
+
+  answers.forEach((answer, idx)=>{
+
+    const qDiv = document.querySelectorAll(".q")[idx];
+    if(!qDiv) return;
+
+    qDiv.querySelectorAll(".choice").forEach(choice=>{
+
+      const input = choice.querySelector("input");
+      if(!input) return;
+
+      if(input.value + ".png" === answer.selectedImageTitle){
+
+        choice.classList.add(
+          answer.isCorrect ? "reviewCorrect" : "reviewIncorrect"
+        );
+
+        const badge = document.createElement("div");
+        badge.className =
+          answer.isCorrect ? "correctBadge" : "incorrectBadge";
+        badge.textContent = answer.isCorrect ? "✓" : "✕";
+        choice.appendChild(badge);
+      }
+
+      if(
+        !answer.isCorrect &&
+        input.value + ".png" === answer.correctImageTitle
+      ){
+        choice.classList.add("reviewCorrect");
+
+        const badge = document.createElement("div");
+        badge.className = "correctBadge";
+        badge.textContent = "✓";
+        choice.appendChild(badge);
+      }
+
+    });
+
+  });
 }
   
 document.addEventListener("DOMContentLoaded",()=>{
