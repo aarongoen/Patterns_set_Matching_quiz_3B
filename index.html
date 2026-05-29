@@ -434,6 +434,8 @@ const QUESTIONS = [
   "3b.5","3b.6","3b.7","3b.8"
 ];
 
+  let activeQuestions = [];
+
 const $ = (id)=>document.getElementById(id);
 
 function shuffle(arr){
@@ -448,9 +450,9 @@ async function startQuizFlow(e){
 
   questionsDiv.innerHTML = "";
 
-  const randomized = shuffle(QUESTIONS);
-
-  randomized.forEach((qName, idx)=>{
+  activeQuestions = shuffle(QUESTIONS);
+  
+  activeQuestions.forEach((qName, idx)=>{
 
     const qDiv = document.createElement("div");
 
@@ -539,30 +541,74 @@ async function submitQuiz(){
   let score = 0;
   const answers = [];
 
-  QUESTIONS.forEach((qName, idx)=>{
+  for(let idx = 0; idx < activeQuestions.length; idx++){
 
-    const selected =
-      document.querySelector(`input[name="Q${idx}"]:checked`);
+    const qName = activeQuestions[idx];
+    const selected = document.querySelector(`input[name="Q${idx}"]:checked`);
 
     if(!selected){
-      alert("Please answer every question before submitting.");
-      throw new Error("Missing answer");
+      $("submitStatus").textContent =
+        "Please answer every question before submitting.";
+      $("submitStatus").className = "status err";
+      return;
     }
 
     const selectedTitle = selected.value;
-    const correctTitle = qName;
-    const isCorrect = selectedTitle === correctTitle;
+    const isCorrect = selectedTitle === qName;
 
     if(isCorrect) score++;
 
     answers.push({
       questionId:`Q${idx + 1}`,
       selectedImageTitle:selectedTitle + ".png",
-      correctImageTitle:correctTitle + ".png",
+      correctImageTitle:qName + ".png",
       isCorrect
     });
+  }
 
-  });
+  const payload = {
+    quizTitle:"Patterns Set 3B Matching Quiz",
+    submittedAtISO:new Date().toISOString(),
+    student:{
+      firstName:$("firstName").value.trim(),
+      lastName:$("lastName").value.trim(),
+      email:$("email").value.trim(),
+      gradeSection:$("gradeSection").value
+    },
+    result:{
+      score,
+      total:activeQuestions.length,
+      answers
+    },
+    userAgent:navigator.userAgent
+  };
+
+  $("scorePreview").textContent =
+    `Score: ${score} / ${activeQuestions.length}`;
+
+  $("submitStatus").textContent = "Submitting…";
+  $("submitStatus").className = "status";
+
+  try{
+    await fetch(GOOGLE_APPS_SCRIPT_WEB_APP_URL,{
+      method:"POST",
+      body:JSON.stringify(payload)
+    });
+
+    $("submitStatus").textContent =
+      "Results submitted successfully.";
+    $("submitStatus").className = "status ok";
+
+    showReview(answers);
+    $("submitBtn").disabled = true;
+
+  }catch(err){
+    console.error(err);
+    $("submitStatus").textContent =
+      "Submission failed: " + err;
+    $("submitStatus").className = "status err";
+  }
+}
 
   const payload = {
     quizTitle:"Patterns Set 3B Matching Quiz",
